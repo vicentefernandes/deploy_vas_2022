@@ -1,0 +1,51 @@
+#!/bin/bash
+
+REPO=repo.gradiant.org:9008
+PROJECT_NAME=vas_jeddah
+DOCKERFILE=docker/Dockerfile
+
+function build_docker {
+
+  local "REPO" "PROJECT" "VERSION" "DOCKERFILE" "CONTEXT"
+
+  REPO=""
+  PROJECT_NAME=""
+  VERSION=""
+  DOCKERFILE=Dockerfile
+  CONTEXT=.
+
+  while (( ${#} > 0 )); do
+    case "${1}" in
+      ( '--repo='* ) REPO="${1#*=}" ;;
+      ( '--project='* ) PROJECT_NAME="${1#*=}" ;;
+      ( '--version='* ) VERSION="${1#*=}" ;;
+      ( '--dockerfile='* ) DOCKERFILE=$(realpath ${1#*=}) ;;
+      ( '--context='* ) CONTEXT=$(realpath ${1#*=}) ;;
+      ( '--' ) operands+=( "${@:2}" ); break ;;  # End of options
+      ( '-'?* ) ;;                               # Discard non-valid options
+      ( * ) operands+=( "${1}" )                 # Handles operands
+    esac
+    shift
+  done
+
+  if [ -z "PROJECT_NAME" ] || [ "${PROJECT_NAME}" == "" ]
+  then
+      echo "You must specify project name."
+      exit -1
+  fi
+
+  if [ -z "REPO" ] || [ "${REPO}" == "" ]
+  then
+      echo "You must specify repository URL."
+      exit -1
+  fi
+
+  docker build -t ${REPO}/${PROJECT_NAME}:${VERSION} -f ${DOCKERFILE} ${CONTEXT}
+  ## docker rmi `docker images --filter label=builder=true -q`
+  ## docker push ${REPO}/${PROJECT_NAME}:${VERSION}
+}
+
+
+
+read -p 'Please, enter version number: ' VERSION
+build_docker --repo=$REPO --project=$PROJECT_NAME --version=$VERSION --dockerfile=$DOCKERFILE

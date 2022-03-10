@@ -1,0 +1,19 @@
+version: '2.3'
+
+services:
+  vas:
+    image: repo.gradiant.org:9008/vas_jeddah:2022.03.10
+    restart: always
+    network_mode: host
+    ports:
+      - 9002:9002
+      
+    environment:
+      MODULEID: 200
+      MYSQL_ADDR: "192.168.1.82"
+      MYSQL_PORT: "3306"
+      MYSQL_DBNAME: "vas_manager"
+      MYSQL_USERNAME: "vas_jeddah"
+      MYSQL_PASSWORD : "vas_jeddah"
+    volumes:
+      - /home/vicente/Work/counter/demo/shared/configs:/config

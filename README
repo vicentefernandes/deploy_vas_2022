@@ -1,0 +1,36 @@
+├── BUILD_DOCKER
+├── docker
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   └── va_process_video
+├── README
+├── stream.sdp
+├── vas-compose.yml
+└── vas_system.sql
+
+
+
+
+# install DB
+mysql -u [user] -p [database_name] < [filename].sql
+
+# config vas 
+TODO
+
+# buid docker
+./BUILD_DOCKER
+
+# run docker
+docker-compose -f vas-compose.yml down
+
+# receive alarms
+nc -lk 8888
+
+# play output video
+ffplay -protocol_whitelist file,tcp,udp,rtp  stream.sdp
+
+# update vas version
+cp va_process_video to /docker
+build new docker
+
+
